@@ -92,7 +92,7 @@ export default function Home() {
 												onChange={handleChange}
 												value={data.distance}
 											/>
-											<InputRightAddon children="km" />
+											<InputRightAddon>km</InputRightAddon>
 										</InputGroup>
 									</FormControl>
 									<FormControl id="economy">
@@ -104,7 +104,7 @@ export default function Home() {
 												onChange={handleChange}
 												value={data.economy}
 											/>
-											<InputRightAddon children="km per L" />
+											<InputRightAddon>km per L</InputRightAddon>
 										</InputGroup>
 									</FormControl>
 								</Stack>
@@ -133,7 +133,7 @@ export default function Home() {
 																onChange={handleChange}
 																placeholder={data.distanceHighway}
 															/>
-															<InputRightAddon children="km" />
+															<InputRightAddon>km</InputRightAddon>
 														</InputGroup>
 													</FormControl>
 													<FormControl id="economyHighway">
@@ -157,7 +157,7 @@ export default function Home() {
 																onChange={handleChange}
 																value={data.economyHighway}
 															/>
-															<InputRightAddon children="km per L" />
+															<InputRightAddon>km per L</InputRightAddon>
 														</InputGroup>
 													</FormControl>
 												</AccordionPanel>
@@ -198,7 +198,7 @@ export default function Home() {
 																onChange={handleChange}
 																placeholder={data.minutesIdle}
 															/>
-															<InputRightAddon children="min" />
+															<InputRightAddon>min</InputRightAddon> 
 														</InputGroup>
 													</FormControl>
 												</AccordionPanel>
@@ -212,14 +212,14 @@ export default function Home() {
 								<FormControl id="price">
 									<FormLabel>Fuel price</FormLabel>
 									<InputGroup>
-										<InputLeftAddon children="₱" />
+										<InputLeftAddon>₱</InputLeftAddon>
 										<Input
 											type="num"
 											name="price"
 											onChange={handleChange}
 											value={data.price}
 										/>
-										<InputRightAddon children="per L" />
+										<InputRightAddon>per L</InputRightAddon>
 									</InputGroup>
 								</FormControl>
 							</Box>

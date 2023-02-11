@@ -46,7 +46,7 @@ const Search = () => {
 
 	return (
 		<>
-			<Button rightIcon={<QuestionIcon />} colorScheme="teal" onClick={onOpen} colorScheme="yellow">
+			<Button rightIcon={<QuestionIcon />} onClick={onOpen} colorScheme="yellow">
 				Get all data
 			</Button>
 			<Drawer
