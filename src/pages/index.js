@@ -1,115 +1,54 @@
 import Head from "next/head";
 import { useState, useEffect } from "react";
 import {
-	Flex,
-	HStack,
-	IconButton,
-	Input,
-	InputGroup,
-	InputLeftAddon,
-	InputRightAddon,
-	Link,
-	Stack,
-	Text,
+	Flex, Input, InputGroup, InputLeftAddon, InputRightAddon, Stack, FormControl, FormLabel, Stat, StatNumber, StatHelpText, Box, Accordion, AccordionItem, AccordionButton, AccordionPanel, Table, Thead, Tbody, Tr, Th, Td, TableContainer, Card, CardBody, CardHeader, Heading, Tooltip, SimpleGrid, Center, CardFooter, useMediaQuery, Container
 } from "@chakra-ui/react";
-import {
-	FormControl,
-	FormLabel,
-} from "@chakra-ui/react";
-import {
-	Stat,
-	StatLabel,
-	StatNumber,
-	StatHelpText,
-} from "@chakra-ui/react";
-import { Box } from "@chakra-ui/react";
-import {
-	Accordion,
-	AccordionItem,
-	AccordionButton,
-	AccordionPanel,
-	AccordionIcon,
-} from "@chakra-ui/react";
-import {
-	Table,
-	Thead,
-	Tbody,
-	Tr,
-	Th,
-	Td,
-	TableContainer,
-} from "@chakra-ui/react";
-import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
-import { Button, ButtonGroup,  } from "@chakra-ui/react";
-import { ExternalLinkIcon, SearchIcon  } from "@chakra-ui/icons";
-import { useDisclosure } from "@chakra-ui/react";
-
+import { AddIcon, InfoOutlineIcon, MinusIcon } from "@chakra-ui/icons";
+import Search from "@/components/Search";
 
 
 export default function Home() {
 	// Initialize values
 	const [data, setData] = useState({
-		distance: 0,
-		efficiency: 10,
+		distance: 1,
+		economy: 10,
 		distanceHighway: 0,
-		efficiencyHighway: 15,
+		economyHighway: 15,
+		minutesIdle: 0,
 		price: 69,
 	});
-	// Deconstruct?
-	// const {distance, fuelEfficiency, fuelSpent, fuelPrice} = data
-
 	// Save the values into `data` when changed
 	const handleChange = (e) =>
 		setData(prevState => ({ ...prevState, [e.target.name]: e.target.value }))
+	
+	// Initialize result
+	const [result, setResult] = useState(0)
+	const [liters, setLiters] = useState(0);
+	
+	// When `data` changes, set `result`
+	useEffect(() => {
+		let rawLiters =
+			(data.distance / data.economy + data.distanceHighway / data.economyHighway) +
+			(data.minutesIdle / 60) * 0.8;
+		setLiters(rawLiters.toFixed(2));
+		
+		let rawResult =
+			(rawLiters * data.price);
+		setResult(rawResult.toFixed(2));
+
+	}, [data]);
+
+
+	
+	const [days, setDays] = useState(4);
+	const handleChangeDays = (e) => setDays(e.target.value);
 	
 	const [carpool, setCarpool] = useState(2)
 	const handleChangeCarpool = (e) =>
 		setCarpool(e.target.value);
 
-	const [car, setCar] = useState('');
-	const handleChangeCar = (e) => setCar(e.target.value);
-
+	const [lg] = useMediaQuery("(min-width: 62em)");
 	
-	const [destination, setDestination] = useState({
-		first: '',
-		second: '',
-	});
-	const handleChangeDestination = (e) =>
-		setDestination((prevState) => ({ ...prevState, [e.target.name]: e.target.value }));
-
-	// Initialize result
-	const [result, setResult] = useState(0)
-	
-	// When `data` changes, set `result`
-	useEffect(() => {
-		let rawResult =
-			(data.distance / data.efficiency +
-				data.distanceHighway / data.efficiencyHighway) *
-			data.price;
-		setResult(rawResult.toFixed(2));
-	}, [data]);
-
-	// const handleEfficiencyHighway = (e) => {
-	// 	if (e.target.checked) {
-	// 		let calculatedEfficiencyHighway = 1.5 * data.efficiency
-	// 		setData((prevState) => ({
-	// 				...prevState,
-	// 				[efficiencyHighway]: calculatedEfficiencyHighway,
-	// 		}));
-	// 		} else {
-	// 			setData((prevState) => ({
-	// 				...prevState,
-	// 				[efficiencyHighway]: e.target.value,
-	// 			}));
-	// 		}
-	// }
-
-	// console.log(data)
-
-	const { getDisclosureProps, getButtonProps } = useDisclosure();
-
-	const buttonProps = getButtonProps();
-	const disclosureProps = getDisclosureProps();
 	
 
 	return (
@@ -120,246 +59,305 @@ export default function Home() {
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
-			<HStack>
-				<Box w="50%" p={8}>
-					<Stack spacing={3}>
-						<FormControl id="distance">
-							<FormLabel>Distance</FormLabel>
-							<InputGroup>
-								<Input type="num" name="distance" onChange={handleChange} />
-								<InputRightAddon children="km" />
-							</InputGroup>
-						</FormControl>
-						<FormControl id="efficiency">
-							<FormLabel>Fuel efficiency</FormLabel>
-							<InputGroup>
-								<Input
-									type="num"
-									name="efficiency"
-									onChange={handleChange}
-									value={data.efficiency}
-								/>
-								<InputRightAddon children="km/L" />
-							</InputGroup>
-						</FormControl>
-					</Stack>
-				</Box>
-				<Box>
-					<Button {...buttonProps}>Passed through highway?</Button>
-					<Stack {...disclosureProps} mt={4} spacing={3}>
-						<FormControl id="distanceHighway">
-							<FormLabel>Distance on highway</FormLabel>
-							<InputGroup>
-								<Input type="num" name="distanceHighway" onChange={handleChange} />
-								<InputRightAddon children="km" />
-							</InputGroup>
-						</FormControl>
-						<FormControl id="efficiencyHighway">
-							<FormLabel>Fuel efficiency on highway</FormLabel>
-							<InputGroup>
-								<Input
-									type="num"
-									name="efficiencyHighway"
-									onChange={handleChange}
-									value={data.efficiencyHighway}
-								/>
-								<InputRightAddon children="km/L" />
-							</InputGroup>
-						</FormControl>
-					</Stack>
+			{/* <Box>
+				<Search />
+			</Box> */}
 
-					{/* <Accordion defaultIndex={[0]} allowMultiple>
-						<AccordionItem>
-							<h2>
-								<AccordionButton _expanded={{ bg: "tomato", color: "white" }}>
-									<Box as="span" flex="1" textAlign="left">
-										Passed through highway?
-									</Box>
-									<AccordionIcon />
-								</AccordionButton>
-							</h2>
-							<AccordionPanel>
+			<Center minH="calc(100vh)" p={8}>
+				<SimpleGrid
+					spacing={4}
+					columns={{
+						base: 1,
+						lg: 3,
+					}}>
+					<Card size="md" variant="elevated" maxWidth="500px">
+						<Search />
+						{lg ? (
+							""
+						) : (
+							<CardHeader>
+								<Heading size="md">calculate</Heading>
+							</CardHeader>
+						)}
+
+						<CardBody>
+							<Box maxWidth="250px">
 								<Stack spacing={3}>
-									<FormControl id="distanceHighway">
-										<FormLabel>Distance on highway</FormLabel>
-										<InputGroup>
-											<Input type="num" name="distanceHighway" onChange={handleChange} />
-											<InputRightAddon children="km" />
-										</InputGroup>
-									</FormControl>
-									<FormControl id="efficiencyHighway">
-										<FormLabel>Fuel efficiency on highway</FormLabel>
+									<FormControl id="distance">
+										<FormLabel>Distance</FormLabel>
 										<InputGroup>
 											<Input
 												type="num"
-												name="efficiencyHighway"
+												name="distance"
 												onChange={handleChange}
-												value={data.efficiencyHighway}
+												value={data.distance}
 											/>
-											<InputRightAddon children="km/L" />
+											<InputRightAddon children="km" />
+										</InputGroup>
+									</FormControl>
+									<FormControl id="economy">
+										<FormLabel>Fuel economy</FormLabel>
+										<InputGroup>
+											<Input
+												type="num"
+												name="economy"
+												onChange={handleChange}
+												value={data.economy}
+											/>
+											<InputRightAddon children="km per L" />
 										</InputGroup>
 									</FormControl>
 								</Stack>
-							</AccordionPanel>
-						</AccordionItem>
-					</Accordion> */}
-				</Box>
-			</HStack>
+							</Box>
 
-			<Box p={8}>
-				<FormControl id="fuelPrice">
-					<FormLabel>Fuel price</FormLabel>
-					<InputGroup>
-						<InputLeftAddon children="₱" />
-						<Input
-							type="num"
-							name="fuelPrice"
-							onChange={handleChange}
-							value={data.price}
-						/>
-					</InputGroup>
-				</FormControl>
+							<Box my={8} spacing={3}>
+								<Accordion allowMultiple>
+									<AccordionItem>
+										{({ isExpanded }) => (
+											<>
+												<h2>
+													<AccordionButton>
+														<AddIcon fontSize="12px" marginRight={5} />
+														<Box as="span" flex="1" textAlign="left">
+															I passed through highway
+														</Box>
+													</AccordionButton>
+												</h2>
+												<AccordionPanel pb={4} maxWidth="250px">
+													<FormControl id="distanceHighway">
+														<FormLabel>Distance on highway</FormLabel>
+														<InputGroup>
+															<Input
+																type="num"
+																name="distanceHighway"
+																onChange={handleChange}
+																placeholder={data.distanceHighway}
+															/>
+															<InputRightAddon children="km" />
+														</InputGroup>
+													</FormControl>
+													<FormControl id="economyHighway">
+														<FormLabel>
+															Fuel economy on highway{" "}
+															<Tooltip
+																hasArrow
+																label="
+													Highway fuel economy could be from 1.15-2.10x (average: 1.5x) of
+													city fuel economy."
+																bg="gray.800"
+																color="white"
+																closeDelay={500}>
+																<InfoOutlineIcon marginLeft="2" />
+															</Tooltip>
+														</FormLabel>
+														<InputGroup>
+															<Input
+																type="num"
+																name="economyHighway"
+																onChange={handleChange}
+																value={data.economyHighway}
+															/>
+															<InputRightAddon children="km per L" />
+														</InputGroup>
+													</FormControl>
+												</AccordionPanel>
+											</>
+										)}
+									</AccordionItem>
 
-				<Stat>
-					<StatLabel>Your trip costs</StatLabel>
-					<StatNumber fontSize="6xl">₱{result}</StatNumber>
-					<StatHelpText>one trip</StatHelpText>
-				</Stat>
+									<AccordionItem>
+										{({ isExpanded }) => (
+											<>
+												<h2>
+													<AccordionButton>
+														<AddIcon fontSize="12px" marginRight={5} />
+														<Box as="span" flex="1" textAlign="left">
+															I was idling / stuck in traffic
+														</Box>
+													</AccordionButton>
+												</h2>
+												<AccordionPanel pb={4} maxWidth="250px">
+													<FormControl id="minutesIdle">
+														<FormLabel>
+															Minutes spent idling
+															<Tooltip
+																hasArrow
+																label="
+													An idling vehicle uses about 0.8 litres of fuel per hour. If your
+													fuel economy values are accurate, you might not need to add this."
+																bg="gray.800"
+																color="white"
+																closeDelay={500}>
+																<InfoOutlineIcon marginLeft="2" />
+															</Tooltip>
+														</FormLabel>
+														<InputGroup>
+															<Input
+																type="num"
+																name="minutesIdle"
+																onChange={handleChange}
+																placeholder={data.minutesIdle}
+															/>
+															<InputRightAddon children="min" />
+														</InputGroup>
+													</FormControl>
+												</AccordionPanel>
+											</>
+										)}
+									</AccordionItem>
+								</Accordion>
+							</Box>
 
-				<TableContainer>
-					<Table size="sm">
-						<Thead>
-							<Tr>
-								<Th isNumeric>COST</Th>
-								<Th></Th>
-							</Tr>
-						</Thead>
-						<Tbody>
-							<Tr>
-								<Td isNumeric>₱{(result * 2).toFixed(2)}</Td>
-								<Td>round trip</Td>
-							</Tr>
-							<Tr>
-								<Td isNumeric>₱{(result * 2 * 22).toFixed(2)}</Td>
-								<Td>monthly (round trip x 22)</Td>
-							</Tr>
-							<Tr>
-								<Td isNumeric>₱{(result * 2 * 260).toFixed(2)}</Td>
-								<Td>yearly (round trip x 260)</Td>
-							</Tr>
-							<Tr>
-								<Td isNumeric>₱{(result / carpool).toFixed(2)}</Td>
-								<Td>
-									one trip per person<br></br>
-									<Flex gap={2}>
-										for a carpool of{" "}
+							<Box maxWidth="250px">
+								<FormControl id="price">
+									<FormLabel>Fuel price</FormLabel>
+									<InputGroup>
+										<InputLeftAddon children="₱" />
 										<Input
-											size="xs"
-											maxW={16}
-											name="carpool"
-											onChange={handleChangeCarpool}
-											value={carpool}
+											type="num"
+											name="price"
+											onChange={handleChange}
+											value={data.price}
 										/>
-									</Flex>
-								</Td>
-							</Tr>
-						</Tbody>
-					</Table>
-				</TableContainer>
-			</Box>
-			<Box w="50%" p={8}>
-				<h2>Don't know all data?</h2>
-				<Tabs variant="line" colorScheme="red">
-					<TabList>
-						<Tab>Distance</Tab>
-						<Tab>Fuel efficiency</Tab>
-						<Tab>Fuel price</Tab>
-					</TabList>
-					<TabPanels>
-						{/* -------------------------------------------------------------------------- */
-						/*                                  DISTANCE                                  */
-						/* -------------------------------------------------------------------------- */}
-						<TabPanel>
-							<HStack>
-								<Input
-									type="num"
-									name="first"
-									onChange={handleChangeDestination}
-									value={destination.first}
-								/>
-								<Input
-									type="num"
-									name="second"
-									onChange={handleChangeDestination}
-									value={destination.second}
-								/>
-								<Link
-									href={"https://www.google.com/maps/dir/" + destination.first + "/" + destination.second}
-									isExternal>
-									<IconButton aria-label="Search database" icon={<SearchIcon />} />
-								</Link>
-							</HStack>
-							<Stack>
-								<Link
-									href="https://www.google.com/maps/dir/Makati,+Metro+Manila/BGC,+Taguig,+Metro+Manila/@14.5478113,121.0193523,14z/data=!4m14!4m13!1m5!1m1!1s0x3397c90264a0ed01:0x2b066ed57830cace!2m2!1d121.0244452!2d14.554729!1m5!1m1!1s0x3397c8f3fa2994af:0x89c988af4760e40a!2m2!1d121.0503183!2d14.5408671!3e0"
-									isExternal>
-									<Button>
-										Go to Google maps <ExternalLinkIcon mx="2px" />
-									</Button>
-								</Link>
+										<InputRightAddon children="per L" />
+									</InputGroup>
+								</FormControl>
+							</Box>
+						</CardBody>
 
-								<Link
-									href="https://www.openstreetmap.org/directions?engine=fossgis_osrm_car&route=14.5568%2C121.0211%3B14.5551%2C121.0481#map=15/14.5540/121.0351"
-									isExternal>
-									<Button variant="outline">
-										Go to OpenStreetMap <ExternalLinkIcon mx="2px" />
-									</Button>
-								</Link>
-							</Stack>
-						</TabPanel>
-						{/* -------------------------------------------------------------------------- */
-						/*                                  FUEL EFFICIENCY                                  */
-						/* -------------------------------------------------------------------------- */}
-						<TabPanel>
-							<HStack>
-								<Input type="num" name="car" onChange={handleChangeCar} value={car} />
-								<Link
-									href={"https://www.google.com/search?q=" + car + "+fuel+efficiency"}
-									isExternal>
-									<IconButton aria-label="Search database" icon={<SearchIcon />} />
-								</Link>
-							</HStack>
-						</TabPanel>
-						{/* -------------------------------------------------------------------------- */
-						/*                                  FUEL PRICE                                  */
-						/* -------------------------------------------------------------------------- */}
-						<TabPanel>
-							<Stack>
-								<Link
-									href="https://www.doe.gov.ph/price-monitoring-charts?q=retail-pump-prices-metro-manila"
-									isExternal>
-									<Button>
-										Go to Department of Energy <ExternalLinkIcon mx="2px" />
-									</Button>
-								</Link>
+						{lg ? (
+							<CardFooter>
+								<Heading size="md">calculate</Heading>
+							</CardFooter>
+						) : (
+							""
+						)}
+					</Card>
 
-								<Link
-									href="https://www.globalpetrolprices.com/Philippines/gasoline_prices/"
-									isExternal>
-									<Button variant="outline">
-										Go to GlobalPetrolPrices <ExternalLinkIcon mx="2px" />
-									</Button>
-								</Link>
-								<Link href="https://www.numbeo.com/gas-prices/in/Manila" isExternal>
-									<Button variant="outline">
-										Go to Numbeo <ExternalLinkIcon mx="2px" />
-									</Button>
-								</Link>
+					<Card size="md" variant="elevated" maxWidth="500px">
+						{lg ? (
+							""
+						) : (
+							<CardHeader>
+								<Heading size="md">your trip</Heading>
+							</CardHeader>
+						)}
+
+						<CardBody>
+							<Stack>
+								<Stat>
+									<StatNumber fontSize="6xl">₱{result}</StatNumber>
+									<StatHelpText>one trip</StatHelpText>
+									<StatHelpText>{liters} Liters</StatHelpText>
+								</Stat>
+								<Stat>
+									<StatNumber fontSize="6xl">₱{(result * 2).toFixed(2)}</StatNumber>
+									<StatHelpText>round trip</StatHelpText>
+									<StatHelpText>{(liters * 2).toFixed(2)}Liters</StatHelpText>
+								</Stat>
 							</Stack>
-						</TabPanel>
-					</TabPanels>
-				</Tabs>
-			</Box>
+
+							{/* <Button colorScheme="blue" onClick={handleSaveLog}>Save trip</Button>
+				{saveLog} */}
+						</CardBody>
+
+						{lg ? (
+							<CardFooter>
+								<Heading size="md">your trip</Heading>
+							</CardFooter>
+						) : (
+							""
+						)}
+					</Card>
+					<Card size="md" variant="elevated" maxWidth="500px">
+						{lg ? (
+							""
+						) : (
+							<CardHeader>
+								<Heading size="md">costs</Heading>
+							</CardHeader>
+						)}
+
+						<CardBody>
+							<TableContainer>
+								<Table size="sm">
+									<Thead>
+										<Tr>
+											<Th isNumeric></Th>
+											<Th>Recurring</Th>
+										</Tr>
+									</Thead>
+									<Tbody>
+										<Tr>
+											<Td isNumeric>₱{(result * 2 * days).toFixed(2)}</Td>
+											<Td>
+												<Flex align={"baseline"} gap={2}>
+													for{" "}
+													<Input
+														size="sm"
+														maxW={10}
+														min={0}
+														name="days"
+														onChange={handleChangeDays}
+														value={days}
+													/>{" "}
+													days
+												</Flex>
+												(round trip x {days})
+											</Td>
+										</Tr>
+										<Tr>
+											<Td isNumeric>₱{(result * 2 * 5).toFixed(2)}</Td>
+											<Td>weekly (round trip x 5)</Td>
+										</Tr>
+										<Tr>
+											<Td isNumeric>₱{(result * 2 * 22).toFixed(2)}</Td>
+											<Td>monthly (round trip x 22)</Td>
+										</Tr>
+										<Tr>
+											<Td isNumeric>₱{(result * 2 * 260).toFixed(2)}</Td>
+											<Td>yearly (round trip x 260)</Td>
+										</Tr>
+
+										<Tr>
+											<Th isNumeric></Th>
+											<Th>
+												<Flex align={"baseline"} gap={2}>
+													for a carpool of{" "}
+													<Input
+														size="sm"
+														w={10}
+														min={2}
+														name="carpool"
+														onChange={handleChangeCarpool}
+														value={carpool}
+													/>
+												</Flex>
+											</Th>
+										</Tr>
+										<Tr>
+											<Td isNumeric>₱{(result / carpool).toFixed(2)}</Td>
+											<Td>one trip per person</Td>
+										</Tr>
+										<Tr>
+											<Td isNumeric>₱{((result * 2) / carpool).toFixed(2)}</Td>
+											<Td>round trip per person</Td>
+										</Tr>
+									</Tbody>
+								</Table>
+							</TableContainer>
+						</CardBody>
+
+						{lg ? (
+							<CardFooter>
+								<Heading size="md">costs</Heading>
+							</CardFooter>
+						) : (
+							""
+						)}
+					</Card>
+				</SimpleGrid>
+			</Center>
 		</>
 	);
 }
