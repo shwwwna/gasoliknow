@@ -16,10 +16,15 @@ import {
 	DrawerCloseButton,
 	useDisclosure,
 	Heading,
-	Divider,
+	Divider, Tooltip
 } from "@chakra-ui/react";
 
-import { ExternalLinkIcon, SearchIcon, QuestionIcon } from "@chakra-ui/icons";
+import {
+	ExternalLinkIcon,
+	SearchIcon,
+	QuestionIcon,
+	InfoOutlineIcon,
+} from "@chakra-ui/icons";
 import React from "react";
 import { useState } from "react";
 import DOEMenu from "./DOEMenu";
@@ -62,7 +67,9 @@ const Search = () => {
 					<DrawerBody>
 						<Stack spacing="24px">
 							<Box>
-								<Heading size="md"  mb="3">Distance</Heading>
+								<Heading size="md" mb="3">
+									Distance
+								</Heading>
 								<Flex gap={1} align={"flex-end"}>
 									<FormControl id="destinationFirst">
 										<FormLabel>Start</FormLabel>
@@ -99,10 +106,23 @@ const Search = () => {
 							</Box>
 							<Divider orientation="horizontal" />
 							<Box>
-								<Heading size="md"  mb="3">Fuel economy</Heading>
-								<Flex gap={1}  align={"flex-end"}>
+								<Heading size="md" mb="3">
+									Fuel economy
+								</Heading>
+								<Flex gap={1} align={"flex-end"}>
 									<FormControl id="car">
-										<FormLabel>Car model</FormLabel>
+										<Flex align={"baseline"}><FormLabel>
+											Car model
+										</FormLabel>
+											<Tooltip
+												hasArrow
+												label="It's best to check your car's dashboard or Facebook groups. There are many real-life factors like maintenance and additional passengers. The advertised fuel economy value is almost always higher than actual."
+												bg="gray.800"
+												color="white"
+												closeDelay={500}>
+												<InfoOutlineIcon marginLeft="2" />
+											</Tooltip></Flex>
+										
 										<Input
 											type="num"
 											name="car"
@@ -121,7 +141,9 @@ const Search = () => {
 
 							<Divider orientation="horizontal" />
 							<Box>
-								<Heading size="md" mb="3">Fuel price</Heading>
+								<Heading size="md" mb="3">
+									Fuel price
+								</Heading>
 								<DOEMenu />
 								<Stack my="3">
 									<b>Other sources</b>

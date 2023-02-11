@@ -5,6 +5,7 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon, InfoOutlineIcon, MinusIcon } from "@chakra-ui/icons";
 import Search from "@/components/Search";
+import format from "@/utils/numberFormatter";
 
 
 export default function Home() {
@@ -30,11 +31,11 @@ export default function Home() {
 		let rawLiters =
 			(data.distance / data.economy + data.distanceHighway / data.economyHighway) +
 			(data.minutesIdle / 60) * 0.8;
-		setLiters(rawLiters.toFixed(2));
+		setLiters(rawLiters);
 		
 		let rawResult =
 			(rawLiters * data.price);
-		setResult(rawResult.toFixed(2));
+		setResult(rawResult);
 
 	}, [data]);
 
@@ -55,7 +56,10 @@ export default function Home() {
 		<>
 			<Head>
 				<title>GasoliKnow - Calculate your trip costs</title>
-				<meta name="description" content="Calculate how much your car trip costs, in Pesos and Liters." />
+				<meta
+					name="description"
+					content="Calculate how much your car trip costs, in Pesos and Liters."
+				/>
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
@@ -119,47 +123,49 @@ export default function Home() {
 													<AccordionButton>
 														<AddIcon fontSize="12px" marginRight={5} />
 														<Box as="span" flex="1" textAlign="left">
-															I passed through highway
+															Also pass through highway
 														</Box>
 													</AccordionButton>
 												</h2>
-												<AccordionPanel pb={4} maxWidth="250px">
-													<FormControl id="distanceHighway">
-														<FormLabel>Distance on highway</FormLabel>
-														<InputGroup>
-															<Input
-																type="num"
-																name="distanceHighway"
-																onChange={handleChange}
-																placeholder={data.distanceHighway}
-															/>
-															<InputRightAddon>km</InputRightAddon>
-														</InputGroup>
-													</FormControl>
-													<FormControl id="economyHighway">
-														<FormLabel>
-															Fuel economy on highway{" "}
-															<Tooltip
-																hasArrow
-																label="
+												<AccordionPanel pb={4}>
+													<Stack spacing={3}>
+														<FormControl id="distanceHighway">
+															<FormLabel>Distance on highway</FormLabel>
+															<InputGroup maxWidth="250px">
+																<Input
+																	type="num"
+																	name="distanceHighway"
+																	onChange={handleChange}
+																	placeholder={data.distanceHighway}
+																/>
+																<InputRightAddon>km</InputRightAddon>
+															</InputGroup>
+														</FormControl>
+														<FormControl id="economyHighway">
+															<Flex align={"baseline"}>
+																<FormLabel>Fuel economy on highway </FormLabel>
+																<Tooltip
+																	hasArrow
+																	label="
 													Highway fuel economy could be from 1.15-2.10x (average: 1.5x) of
 													city fuel economy."
-																bg="gray.800"
-																color="white"
-																closeDelay={500}>
-																<InfoOutlineIcon marginLeft="2" />
-															</Tooltip>
-														</FormLabel>
-														<InputGroup>
-															<Input
-																type="num"
-																name="economyHighway"
-																onChange={handleChange}
-																value={data.economyHighway}
-															/>
-															<InputRightAddon>km per L</InputRightAddon>
-														</InputGroup>
-													</FormControl>
+																	bg="gray.800"
+																	color="white"
+																	closeDelay={500}>
+																	<InfoOutlineIcon marginLeft="2" />
+																</Tooltip>
+															</Flex>
+															<InputGroup maxWidth="250px">
+																<Input
+																	type="num"
+																	name="economyHighway"
+																	onChange={handleChange}
+																	value={data.economyHighway}
+																/>
+																<InputRightAddon>km per L</InputRightAddon>
+															</InputGroup>
+														</FormControl>
+													</Stack>
 												</AccordionPanel>
 											</>
 										)}
@@ -172,15 +178,16 @@ export default function Home() {
 													<AccordionButton>
 														<AddIcon fontSize="12px" marginRight={5} />
 														<Box as="span" flex="1" textAlign="left">
-															I was idling / stuck in traffic
+															Idling / stuck in traffic
 														</Box>
 													</AccordionButton>
 												</h2>
 												<AccordionPanel pb={4} maxWidth="250px">
 													<FormControl id="minutesIdle">
-														<FormLabel>
+														<Flex align={"baseline"}><FormLabel>
 															Minutes spent idling
-															<Tooltip
+															
+														</FormLabel><Tooltip
 																hasArrow
 																label="
 													An idling vehicle uses about 0.8 litres of fuel per hour. If your
@@ -189,8 +196,8 @@ export default function Home() {
 																color="white"
 																closeDelay={500}>
 																<InfoOutlineIcon marginLeft="2" />
-															</Tooltip>
-														</FormLabel>
+															</Tooltip></Flex>
+														
 														<InputGroup>
 															<Input
 																type="num"
@@ -198,7 +205,7 @@ export default function Home() {
 																onChange={handleChange}
 																placeholder={data.minutesIdle}
 															/>
-															<InputRightAddon>min</InputRightAddon> 
+															<InputRightAddon>min</InputRightAddon>
 														</InputGroup>
 													</FormControl>
 												</AccordionPanel>
@@ -246,14 +253,14 @@ export default function Home() {
 						<CardBody>
 							<Stack>
 								<Stat>
-									<StatNumber fontSize="6xl">₱{result}</StatNumber>
+									<StatNumber fontSize="6xl">₱{format(result)}</StatNumber>
 									<StatHelpText>one trip</StatHelpText>
-									<StatHelpText>{liters} Liters</StatHelpText>
+									<StatHelpText>{format(liters)} Liters</StatHelpText>
 								</Stat>
 								<Stat>
-									<StatNumber fontSize="6xl">₱{(result * 2).toFixed(2)}</StatNumber>
+									<StatNumber fontSize="6xl">₱{format(result * 2)}</StatNumber>
 									<StatHelpText>round trip</StatHelpText>
-									<StatHelpText>{(liters * 2).toFixed(2)}Liters</StatHelpText>
+									<StatHelpText>{format(liters * 2)} Liters</StatHelpText>
 								</Stat>
 							</Stack>
 
@@ -289,7 +296,7 @@ export default function Home() {
 									</Thead>
 									<Tbody>
 										<Tr>
-											<Td isNumeric>₱{(result * 2 * days).toFixed(2)}</Td>
+											<Td isNumeric>₱{format(result * 2 * days)}</Td>
 											<Td>
 												<Flex align={"baseline"} gap={2}>
 													for{" "}
@@ -307,15 +314,15 @@ export default function Home() {
 											</Td>
 										</Tr>
 										<Tr>
-											<Td isNumeric>₱{(result * 2 * 5).toFixed(2)}</Td>
+											<Td isNumeric>₱{format(result * 2 * 5)}</Td>
 											<Td>weekly (round trip x 5)</Td>
 										</Tr>
 										<Tr>
-											<Td isNumeric>₱{(result * 2 * 22).toFixed(2)}</Td>
+											<Td isNumeric>₱{format(result * 2 * 22)}</Td>
 											<Td>monthly (round trip x 22)</Td>
 										</Tr>
 										<Tr>
-											<Td isNumeric>₱{(result * 2 * 260).toFixed(2)}</Td>
+											<Td isNumeric>₱{format(result * 2 * 260)}</Td>
 											<Td>yearly (round trip x 260)</Td>
 										</Tr>
 
@@ -336,11 +343,11 @@ export default function Home() {
 											</Th>
 										</Tr>
 										<Tr>
-											<Td isNumeric>₱{(result / carpool).toFixed(2)}</Td>
+											<Td isNumeric>₱{format(result / carpool)}</Td>
 											<Td>one trip per person</Td>
 										</Tr>
 										<Tr>
-											<Td isNumeric>₱{((result * 2) / carpool).toFixed(2)}</Td>
+											<Td isNumeric>₱{format((result * 2) / carpool)}</Td>
 											<Td>round trip per person</Td>
 										</Tr>
 									</Tbody>
